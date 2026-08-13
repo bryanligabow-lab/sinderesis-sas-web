@@ -194,7 +194,24 @@ ul{list-style:none;margin:0;padding:0;}
 .why-item h4{font-size:1rem;margin-bottom:6px;}
 .why-item p{font-size:.88rem;margin:0;}
 
-/* ===== Testimonials ===== */
+/* ===== Testimonials / Rating ===== */
+.rating-panel{
+  display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:center;
+  background:var(--bg-alt);border:1px solid var(--border);
+  border-left:4px solid var(--gold-500);
+  border-radius:var(--radius);padding:36px 40px;box-shadow:var(--shadow);
+}
+.rating-score{text-align:center;padding-right:36px;border-right:1px solid var(--border);}
+.rating-number{
+  display:block;font-family:'Poppins',sans-serif;font-weight:800;
+  font-size:3.4rem;line-height:1;color:var(--navy-900);
+}
+.rating-score .stars{font-size:1.2rem;margin:8px 0 6px;}
+.rating-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;}
+.rating-body p{margin-bottom:20px;}
+.rating-body strong{color:var(--navy-900);}
+.rating-actions{display:flex;flex-wrap:wrap;gap:14px;}
+
 .testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .testimonial-card{
   background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius);
@@ -221,8 +238,18 @@ ul{list-style:none;margin:0;padding:0;}
 /* ===== Blog ===== */
 .blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .blog-card{
-  border:1px dashed var(--border);border-radius:var(--radius);
-  padding:30px;background:#fff;
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:30px;background:#fff;display:flex;flex-direction:column;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.blog-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.blog-link{
+  color:var(--gold-600);font-weight:600;font-size:.9rem;margin-top:auto;
+}
+.blog-link:hover{color:var(--navy-800);}
+.blog-source{
+  font-size:.75rem;color:var(--muted);margin-top:10px;
+  padding-top:10px;border-top:1px solid var(--border);
 }
 .blog-tag{
   display:inline-block;background:var(--navy-100);color:var(--navy-800);
@@ -337,6 +364,9 @@ ul{list-style:none;margin:0;padding:0;}
   .hamburger{display:flex;}
   .btn-whatsapp span{display:none;}
   .services-grid,.team-grid,.testimonials-grid,.blog-grid,.why-us,.form-row{grid-template-columns:1fr;}
+  .rating-panel{grid-template-columns:1fr;gap:24px;padding:28px;text-align:center;}
+  .rating-score{padding-right:0;border-right:none;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .rating-actions{justify-content:center;}
   .footer-inner{grid-template-columns:1fr;}
   .hero-inner{padding:90px 20px 70px;}
 }
