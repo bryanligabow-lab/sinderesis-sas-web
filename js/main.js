@@ -9,7 +9,7 @@
    Mientras esté vacío, el formulario seguirá funcionando abriendo el
    cliente de correo del visitante.
 ------------------------------------------------------------------ */
-const ENDPOINT_SHEETS = '';
+const ENDPOINT_SHEETS = 'https://script.google.com/macros/s/AKfycbz9C30CMOqz37DIQ5ocuPhg_1p6htnP481U-ZFif2DT5HK3SvVUa38bPLfOhx2Hjtsc5A/exec';
 
 // Tamaño máximo permitido para el documento adjunto.
 const MAX_MB_ADJUNTO = 5;
