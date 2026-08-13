@@ -1,5 +1,19 @@
 // ===== SINDERESIS S.A.S. — interacciones =====
 
+/* ------------------------------------------------------------------
+   CONFIGURACIÓN DEL FORMULARIO
+
+   Pega aquí la URL de la aplicación web de Google Apps Script
+   (termina en /exec). Ver google-apps-script/INSTRUCCIONES.md
+
+   Mientras esté vacío, el formulario seguirá funcionando abriendo el
+   cliente de correo del visitante.
+------------------------------------------------------------------ */
+const ENDPOINT_SHEETS = '';
+
+// Tamaño máximo permitido para el documento adjunto.
+const MAX_MB_ADJUNTO = 5;
+
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // Menú móvil
@@ -28,32 +42,104 @@ document.querySelectorAll('.accordion-header').forEach(btn => {
   });
 });
 
-// Formulario de contacto -> abre cliente de correo con los datos
-// NOTA PARA EL DESARROLLADOR: para envío automático real (incluyendo el
-// archivo adjunto), conecta este formulario a un backend o a un servicio
-// de formularios (por ejemplo Formspree, EmailJS o un endpoint propio).
-const contactForm = document.getElementById('contactForm');
+/* ===== Formulario de contacto ===== */
 
-contactForm.addEventListener('submit', (e) => {
+const contactForm = document.getElementById('contactForm');
+const formNote = document.getElementById('formNote');
+const submitBtn = contactForm.querySelector('button[type="submit"]');
+
+function mostrarEstado(mensaje, tipo) {
+  formNote.textContent = mensaje;
+  formNote.className = 'form-note' + (tipo ? ' form-note-' + tipo : '');
+}
+
+/** Lee el archivo adjunto y lo devuelve en base64. */
+function leerArchivo(archivo) {
+  return new Promise((resolve, reject) => {
+    const lector = new FileReader();
+    lector.onload = () => resolve(String(lector.result).split(',')[1] || '');
+    lector.onerror = () => reject(new Error('No se pudo leer el archivo.'));
+    lector.readAsDataURL(archivo);
+  });
+}
+
+/** Respaldo: abre el cliente de correo con los datos completados. */
+function enviarPorCorreo(d) {
+  const asunto = encodeURIComponent('Solicitud de consulta - ' + d.nombre);
+  const cuerpo = encodeURIComponent(
+    'Nombre: ' + d.nombre + '\n' +
+    'Teléfono: ' + d.telefono + '\n' +
+    'Correo: ' + d.email + '\n' +
+    'Área legal: ' + d.area + '\n' +
+    'Fecha preferida: ' + d.fecha + '\n\n' +
+    'Mensaje:\n' + d.mensaje
+  );
+  window.location.href =
+    'mailto:blog.juridico@sinderesis.ec?subject=' + asunto + '&body=' + cuerpo;
+}
+
+contactForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const data = new FormData(contactForm);
-  const nombre = data.get('nombre');
-  const telefono = data.get('telefono');
-  const email = data.get('email');
-  const area = data.get('area');
-  const fecha = data.get('fecha') || 'No especificada';
-  const mensaje = data.get('mensaje');
+  const fd = new FormData(contactForm);
+  const datos = {
+    nombre: fd.get('nombre') || '',
+    telefono: fd.get('telefono') || '',
+    email: fd.get('email') || '',
+    area: fd.get('area') || '',
+    fecha: fd.get('fecha') || '',
+    mensaje: fd.get('mensaje') || ''
+  };
 
-  const subject = encodeURIComponent(`Solicitud de consulta - ${nombre}`);
-  const body = encodeURIComponent(
-    `Nombre: ${nombre}\n` +
-    `Teléfono: ${telefono}\n` +
-    `Correo: ${email}\n` +
-    `Área legal: ${area}\n` +
-    `Fecha preferida: ${fecha}\n\n` +
-    `Mensaje:\n${mensaje}`
-  );
+  // Sin endpoint configurado: se mantiene el envío por correo.
+  if (!ENDPOINT_SHEETS) {
+    enviarPorCorreo(datos);
+    return;
+  }
 
-  window.location.href = `mailto:blog.juridico@sinderesis.ec?subject=${subject}&body=${body}`;
+  const archivo = document.getElementById('archivo').files[0];
+  if (archivo && archivo.size > MAX_MB_ADJUNTO * 1024 * 1024) {
+    mostrarEstado(
+      'El documento supera los ' + MAX_MB_ADJUNTO + ' MB. Envíalo por WhatsApp o correo.',
+      'error'
+    );
+    return;
+  }
+
+  submitBtn.disabled = true;
+  mostrarEstado('Enviando tu solicitud…', null);
+
+  try {
+    const cuerpo = new URLSearchParams(datos);
+    cuerpo.append('origen', window.location.href);
+
+    if (archivo) {
+      cuerpo.append('archivoNombre', archivo.name);
+      cuerpo.append('archivoTipo', archivo.type || 'application/octet-stream');
+      cuerpo.append('archivoDatos', await leerArchivo(archivo));
+    }
+
+    // Apps Script no devuelve cabeceras CORS: se envía en modo no-cors.
+    // La solicitud sí se registra, aunque el navegador no lea la respuesta.
+    await fetch(ENDPOINT_SHEETS, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: cuerpo
+    });
+
+    contactForm.reset();
+    mostrarEstado(
+      '¡Gracias! Recibimos tu solicitud y te contactaremos a la brevedad.',
+      'ok'
+    );
+
+  } catch (error) {
+    mostrarEstado(
+      'No pudimos enviar la solicitud. Escríbenos por WhatsApp al 0979 228 852.',
+      'error'
+    );
+
+  } finally {
+    submitBtn.disabled = false;
+  }
 });

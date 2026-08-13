@@ -298,7 +298,16 @@ ul{list-style:none;margin:0;padding:0;}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{
   outline:none;border-color:var(--gold-500);background:#fff;
 }
-.form-note{font-size:.78rem;color:var(--muted);margin-top:14px;}
+.form-note{font-size:.82rem;color:var(--muted);margin-top:14px;}
+.form-note-ok{
+  color:#1c6b3f;background:#e8f6ee;border:1px solid #b6e0c8;
+  padding:10px 14px;border-radius:8px;font-weight:600;
+}
+.form-note-error{
+  color:#9a2222;background:#fdeaea;border:1px solid #f0c0c0;
+  padding:10px 14px;border-radius:8px;font-weight:600;
+}
+.contact-form button[type="submit"]:disabled{opacity:.6;cursor:not-allowed;transform:none;}
 
 .contact-info-card{
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
