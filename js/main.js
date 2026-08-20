@@ -42,6 +42,34 @@ document.querySelectorAll('.accordion-header').forEach(btn => {
   });
 });
 
+/* ===== Carrusel de ubicación (mapa / fotografía) ===== */
+
+document.querySelectorAll('[data-carrusel]').forEach(carrusel => {
+  const slides = [...carrusel.querySelectorAll('.media-slide')];
+  const puntos = [...carrusel.querySelectorAll('.media-dot')];
+  const leyenda = carrusel.querySelector('.media-caption');
+  if (slides.length < 2) return;
+
+  let actual = 0;
+
+  function mostrar(indice) {
+    actual = (indice + slides.length) % slides.length;
+
+    slides.forEach((s, i) => s.classList.toggle('is-active', i === actual));
+    puntos.forEach((p, i) => p.classList.toggle('is-active', i === actual));
+
+    if (leyenda) {
+      leyenda.innerHTML = slides[actual].dataset.caption || '';
+    }
+  }
+
+  carrusel.querySelector('.media-prev').addEventListener('click', () => mostrar(actual - 1));
+  carrusel.querySelector('.media-next').addEventListener('click', () => mostrar(actual + 1));
+  puntos.forEach((p, i) => p.addEventListener('click', () => mostrar(i)));
+
+  mostrar(0);
+});
+
 /* ===== Formulario de contacto ===== */
 
 const contactForm = document.getElementById('contactForm');
