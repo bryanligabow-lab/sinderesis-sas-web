@@ -429,3 +429,86 @@ ul{list-style:none;margin:0;padding:0;}
   .footer-inner{grid-template-columns:1fr;}
   .hero-inner{padding:90px 20px 70px;}
 }
+
+/* ===== Perfil del representante legal ===== */
+.team-avatar-photo{overflow:hidden;border:2px solid var(--gold-500);}
+.team-avatar-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 9%;transform:scale(2.6);transform-origin:50% 11%;}
+.team-link{display:inline-block;margin-top:10px;color:var(--gold-600);font-weight:600;font-size:.85rem;}
+.team-link:hover{color:var(--navy-800);}
+
+.profile-card{
+  display:grid;grid-template-columns:320px 1fr;
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);overflow:hidden;margin-bottom:56px;
+  scroll-margin-top:90px;
+}
+.profile-photo{background:#a9c3d1;border-right:4px solid var(--gold-500);min-height:440px;position:relative;}
+.profile-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 12%;}
+.profile-body{padding:36px 40px;}
+.profile-body h3{font-size:clamp(1.35rem,2.2vw,1.75rem);margin:6px 0 14px;}
+.profile-bio{font-size:1rem;max-width:640px;margin-bottom:24px;}
+
+.profile-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  padding:18px 0;margin-bottom:26px;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.profile-stats strong{
+  display:block;font-family:'Poppins',sans-serif;font-weight:700;
+  font-size:1.3rem;line-height:1.2;color:var(--navy-900);
+}
+.profile-stats span{font-size:.82rem;color:var(--muted);}
+
+.profile-block h4,.profile-highlight h4{
+  font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--gold-600);margin-bottom:14px;
+}
+.profile-list li{
+  position:relative;padding:0 0 16px 20px;border-left:2px solid var(--navy-100);
+  font-size:.86rem;color:var(--muted);line-height:1.45;
+}
+.profile-list li:last-child{padding-bottom:0;}
+.profile-list li::before{
+  content:"";position:absolute;left:-6px;top:4px;
+  width:10px;height:10px;border-radius:50%;background:var(--gold-500);
+}
+.profile-list strong{display:block;color:var(--navy-900);font-size:.92rem;font-weight:600;}
+.profile-date{
+  display:block;font-size:.72rem;font-weight:600;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--navy-700);margin-bottom:2px;
+}
+.profile-list-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 24px;margin-bottom:32px;}
+.profile-list-grid li{padding-bottom:0;}
+
+.profile-details{grid-column:1 / -1;border-top:1px solid var(--border);}
+.profile-details summary{
+  list-style:none;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 40px;font-family:'Poppins',sans-serif;font-weight:600;
+  font-size:.95rem;color:var(--navy-900);
+}
+.profile-details summary::-webkit-details-marker{display:none;}
+.profile-details summary:hover{background:var(--bg-alt);}
+.profile-more-icon{color:var(--gold-600);font-size:1.4rem;line-height:1;transition:transform .2s ease;}
+.profile-details[open] .profile-more-icon{transform:rotate(45deg);}
+.profile-details-inner{padding:10px 40px 36px;}
+
+.profile-highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.profile-highlight{background:var(--bg-alt);border-radius:10px;padding:18px 20px;}
+.profile-highlight h4{margin-bottom:8px;}
+.profile-highlight p{font-size:.85rem;margin:0;}
+
+@media (max-width:960px){
+  .profile-card{grid-template-columns:1fr;}
+  .profile-photo{border-right:none;border-bottom:4px solid var(--gold-500);min-height:0;aspect-ratio:4 / 3;}
+  .profile-list-grid{grid-template-columns:repeat(2,1fr);}
+  .profile-highlights{grid-template-columns:1fr;}
+}
+@media (max-width:760px){
+  .profile-body{padding:28px 22px;}
+  .profile-details summary{padding:16px 22px;}
+  .profile-details-inner{padding:6px 22px 28px;}
+  .profile-photo{aspect-ratio:4 / 5;}
+  .profile-stats{grid-template-columns:1fr;gap:12px;}
+  .profile-list-grid{grid-template-columns:1fr;}
+}
