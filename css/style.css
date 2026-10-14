@@ -512,3 +512,15 @@ ul{list-style:none;margin:0;padding:0;}
   .profile-stats{grid-template-columns:1fr;gap:12px;}
   .profile-list-grid{grid-template-columns:1fr;}
 }
+
+/* ===== Licencia de estudio jurídico colectivo (footer) ===== */
+.footer-seals{display:flex;align-items:center;gap:12px;}
+.footer-seal-chip{
+  width:70px;height:70px;flex-shrink:0;border-radius:50%;
+  background:#fff;display:flex;align-items:center;justify-content:center;padding:6px;
+}
+.footer-seal-chip img{width:100%;height:100%;object-fit:contain;}
+.footer-license{margin:4px 0 0;font-size:.8rem;line-height:1.5;color:#b9c6d8;}
+.footer-license strong{display:block;margin-top:4px;color:var(--gold-300);font-size:.88rem;letter-spacing:.02em;}
+.footer-license strong span{display:block;white-space:nowrap;}
+.footer-seal-chip{width:62px;height:62px;}
