@@ -6,7 +6,8 @@
  * guarda una copia en solicitudes/registro.csv como respaldo.
  */
 
-const CORREO_DESTINO = 'blog.juridico@sinderesis.ec';
+// Varios destinatarios separados por coma.
+const CORREO_DESTINO = 'blog.juridico@sinderesis.ec, websinderesis@gmail.com';
 const CORREO_REMITENTE = 'formulario@sinderesis.ec';
 const MAX_BYTES_ADJUNTO = 5 * 1024 * 1024;
 const EXTENSIONES_PERMITIDAS = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
