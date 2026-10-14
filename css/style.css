@@ -524,3 +524,6 @@ ul{list-style:none;margin:0;padding:0;}
 .footer-license strong{display:block;margin-top:4px;color:var(--gold-300);font-size:.88rem;letter-spacing:.02em;}
 .footer-license strong span{display:block;white-space:nowrap;}
 .footer-seal-chip{width:62px;height:62px;}
+
+/* Campo trampa anti-spam del formulario (oculto a los visitantes) */
+.form-trampa{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
