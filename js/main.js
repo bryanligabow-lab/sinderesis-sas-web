@@ -6,7 +6,10 @@
    Las solicitudes se envían a enviar.php (en el mismo hosting), que las
    reenvía por correo al estudio y guarda una copia de respaldo.
 ------------------------------------------------------------------ */
-const ENDPOINT_FORMULARIO = 'enviar.php';
+// Fuera del dominio (por ejemplo, la copia en GitHub Pages) se usa la dirección completa.
+const ENDPOINT_FORMULARIO = /(^|\.)sinderesis\.ec$/.test(location.hostname)
+  ? 'enviar.php'
+  : 'https://sinderesis.ec/enviar.php';
 
 // Tamaño máximo permitido para el documento adjunto.
 const MAX_MB_ADJUNTO = 5;

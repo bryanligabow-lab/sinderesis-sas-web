@@ -13,10 +13,39 @@ const MAX_BYTES_ADJUNTO = 5 * 1024 * 1024;
 const EXTENSIONES_PERMITIDAS = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
 const CARPETA_REGISTRO = __DIR__ . '/solicitudes';
 
+// Copias del sitio que pueden enviar a este formulario.
+const ORIGENES_PERMITIDOS = [
+  'https://sinderesis.ec',
+  'https://www.sinderesis.ec',
+  'https://bryanligabow-lab.github.io',
+];
+
+$origen = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origen, ORIGENES_PERMITIDOS, true)) {
+  header('Access-Control-Allow-Origin: ' . $origen);
+  header('Vary: Origin');
+}
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
+/** Anota cada intento (sin datos personales) para diagnosticar envíos que no llegan. */
+function anotarIntento(int $codigo, string $mensaje): void {
+  if (!is_dir(CARPETA_REGISTRO)) return;
+  $archivo = $_FILES['archivo'] ?? null;
+  $linea = implode(' | ', [
+    date('d/m/Y H:i:s'),
+    $codigo,
+    $mensaje,
+    'origen=' . ($_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? '-'),
+    'adjunto=' . ($archivo ? ($archivo['name'] . ' ' . $archivo['size'] . 'B err' . $archivo['error']) : 'no'),
+    'post=' . count($_POST) . ' campos, ' . ($_SERVER['CONTENT_LENGTH'] ?? '0') . 'B',
+    'nav=' . substr($_SERVER['HTTP_USER_AGENT'] ?? '-', 0, 120),
+  ]);
+  @file_put_contents(CARPETA_REGISTRO . '/intentos.log', $linea . "\n", FILE_APPEND | LOCK_EX);
+}
+
 function responder(bool $ok, string $mensaje, int $codigo = 200): void {
+  anotarIntento($codigo, $mensaje);
   http_response_code($codigo);
   echo json_encode(['ok' => $ok, 'mensaje' => $mensaje], JSON_UNESCAPED_UNICODE);
   exit;
@@ -28,6 +57,8 @@ function campo(string $nombre, int $max): string {
   $valor = preg_replace('/[\r\n\t]+/', ' ', $valor);
   return mb_substr($valor, 0, $max);
 }
+
+date_default_timezone_set('America/Guayaquil');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   responder(false, 'Método no permitido.', 405);
@@ -45,9 +76,15 @@ $area     = campo('area', 60);
 $fecha    = campo('fecha', 20);
 $mensaje  = mb_substr(trim((string)($_POST['mensaje'] ?? '')), 0, 5000);
 
-if ($nombre === '' || $telefono === '' || $mensaje === '' ||
-    !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-  responder(false, 'Revisa los datos del formulario e inténtalo de nuevo.', 422);
+if (count($_POST) === 0 && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+  // El servidor descartó el envío completo: el adjunto supera el límite de PHP.
+  responder(false, 'El documento es demasiado grande. Envíalo por WhatsApp al 0979 228 852.', 413);
+}
+if ($nombre === '' || $telefono === '' || $mensaje === '') {
+  responder(false, 'Completa nombre, teléfono y mensaje e inténtalo de nuevo.', 422);
+}
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+  responder(false, 'El correo electrónico no es válido. Revísalo e inténtalo de nuevo.', 422);
 }
 
 // --- Documento adjunto (opcional)
@@ -67,7 +104,6 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] !== UPLOAD_ERR_NO_F
   ];
 }
 
-date_default_timezone_set('America/Guayaquil');
 $sello = date('d/m/Y H:i:s');
 
 // --- Respaldo en CSV (carpeta protegida del acceso web)
